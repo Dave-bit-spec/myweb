@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>迷宫小游戏 · 动态重生</title>
+    <title>50x50 迷宫 · 拖尾特效</title>
     <style>
         * {
             box-sizing: border-box;
@@ -13,7 +13,7 @@
         body {
             margin: 0;
             min-height: 100vh;
-            background: linear-gradient(145deg, #1e2b3c, #0f1722);
+            background: linear-gradient(145deg, #1a2633, #0b1117);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -21,47 +21,49 @@
             padding: 16px;
         }
         .game-container {
-            background: #283b4e;
-            padding: 24px 20px 30px;
-            border-radius: 56px 56px 48px 48px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.7), inset 0 2px 4px rgba(255,255,255,0.08);
-            max-width: 500px;
+            background: #1f3142;
+            padding: 20px 16px 28px;
+            border-radius: 48px 48px 40px 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 2px 4px rgba(255,255,255,0.06);
+            max-width: 680px;
             width: 100%;
-            transition: all 0.2s;
         }
         .maze-wrapper {
-            background: #1f2e3d;
-            border-radius: 32px;
-            padding: 16px;
-            box-shadow: inset 0 6px 10px rgba(0,0,0,0.6);
+            background: #15212b;
+            border-radius: 28px;
+            padding: 12px;
+            box-shadow: inset 0 6px 12px rgba(0,0,0,0.7);
         }
         canvas {
             display: block;
             width: 100%;
             height: auto;
             aspect-ratio: 1 / 1;
-            background: #1a2633;
-            border-radius: 24px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            background: #121c26;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
             touch-action: none;
             cursor: pointer;
+            image-rendering: crisp-edges;
         }
         .status-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 18px 6px 10px 6px;
+            margin: 16px 4px 8px 4px;
             color: #c8dbe9;
             font-weight: 500;
             letter-spacing: 0.3px;
+            gap: 8px;
         }
         .status-bar span {
-            background: #1f2d3b;
-            padding: 8px 20px;
+            background: #17232e;
+            padding: 6px 18px;
             border-radius: 40px;
-            font-size: 0.95rem;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+            font-size: 0.9rem;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.6);
             backdrop-filter: blur(2px);
+            white-space: nowrap;
         }
         .win-message {
             background: #48b87c;
@@ -69,22 +71,22 @@
             font-weight: 600;
             padding: 6px 18px;
             border-radius: 40px;
-            transition: 0.2s;
-            box-shadow: 0 0 12px #48b87c88;
+            transition: 0.15s;
+            box-shadow: 0 0 16px #48b87c66;
         }
         .control-panel {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-top: 18px;
-            padding: 6px 8px;
+            gap: 10px;
+            margin-top: 16px;
+            padding: 0 4px;
         }
         .control-btn {
-            background: #314b61;
+            background: #2f4a62;
             border: none;
             border-radius: 60px;
-            padding: 18px 0;
-            font-size: 2.2rem;
+            padding: 16px 0;
+            font-size: 2rem;
             font-weight: 600;
             color: #e3f0fa;
             box-shadow: 0 6px 0 #0f1a24, 0 10px 20px rgba(0,0,0,0.5);
@@ -96,7 +98,6 @@
             align-items: center;
             line-height: 1;
             text-shadow: 0 2px 2px rgba(0,0,0,0.3);
-            letter-spacing: 2px;
         }
         .control-btn:active {
             transform: translateY(5px);
@@ -113,15 +114,15 @@
         .control-btn.down { grid-column: 2; grid-row: 3; }
 
         .reset-btn {
-            background: #4f3f5e;
-            box-shadow: 0 6px 0 #2d2137, 0 8px 18px rgba(0,0,0,0.5);
-            color: #f2e7ff;
-            font-size: 1.6rem;
-            padding: 12px;
+            background: #3d4e5e;
+            box-shadow: 0 6px 0 #212e3a, 0 8px 18px rgba(0,0,0,0.6);
+            color: #f2f7fc;
+            font-size: 1.4rem;
+            padding: 14px 10px;
             border-radius: 60px;
             border: none;
             width: 100%;
-            margin-top: 12px;
+            margin-top: 14px;
             transition: 0.05s linear;
             cursor: pointer;
             font-weight: 500;
@@ -129,23 +130,24 @@
         }
         .reset-btn:active {
             transform: translateY(5px);
-            box-shadow: 0 1px 0 #2d2137, 0 8px 18px rgba(0,0,0,0.5);
+            box-shadow: 0 1px 0 #212e3a, 0 8px 18px rgba(0,0,0,0.6);
         }
 
-        @media (max-width: 480px) {
-            .game-container { padding: 16px 12px 20px; }
-            .control-btn { padding: 14px 0; font-size: 2rem; }
+        @media (max-width: 500px) {
+            .game-container { padding: 12px 10px 18px; }
+            .control-btn { padding: 14px 0; font-size: 1.8rem; }
+            .status-bar span { font-size: 0.75rem; padding: 4px 12px; }
         }
     </style>
 </head>
 <body>
 <div class="game-container">
     <div class="maze-wrapper">
-        <canvas id="mazeCanvas" width="400" height="400"></canvas>
+        <canvas id="mazeCanvas" width="612" height="612"></canvas>
     </div>
     <div class="status-bar">
         <span id="stepDisplay">🚀 0</span>
-        <span id="winDisplay" class="win-message" style="background: #3d5a6d; color: #bdd6e8;">✦ 闯关</span>
+        <span id="winDisplay" class="win-message" style="background: #2e465a; color: #c8dbe9;">✦ 闯关</span>
     </div>
     <div class="control-panel">
         <button class="control-btn up" data-dir="up">▲</button>
@@ -155,13 +157,14 @@
         <div class="control-btn empty"></div>
         <div class="control-btn empty"></div>
     </div>
-    <button class="reset-btn" id="resetGameBtn">🔄 新地图</button>
+    <button class="reset-btn" id="resetGameBtn">🔄 新地图 (50x50)</button>
 </div>
 <script>
     (function() {
         // ---------- 迷宫核心参数 ----------
-        const SIZE = 11;                // 奇数保证起点/终点在边缘且通路流畅
-        const CELL_SIZE = 400 / SIZE;   // ~36.36px
+        const SIZE = 51;                
+        const CANVAS_SIZE = 612;
+        const CELL_SIZE = CANVAS_SIZE / SIZE;
 
         const canvas = document.getElementById('mazeCanvas');
         const ctx = canvas.getContext('2d');
@@ -169,171 +172,193 @@
         const winSpan = document.getElementById('winDisplay');
 
         // 状态变量
-        let maze = [];                 // 二维: 0墙 1路
-        let player = { x: 1, y: 1 };   // 起点 (1,1)
-        let end = { x: SIZE-2, y: SIZE-2 }; // 终点 (SIZE-2, SIZE-2)
+        let maze = [];
+        let player = { x: 1, y: 1 };
+        let end = { x: SIZE - 2, y: SIZE - 2 };
         let steps = 0;
         let gameWin = false;
 
-        // ---------- 迷宫生成 (深度优先 + 随机) ----------
-        function generateMaze() {
-            // 初始化全墙 (0)
-            maze = Array.from({ length: SIZE }, () => Array(SIZE).fill(0));
+        // ---------- 拖尾系统 (特小) ----------
+        const MAX_TRAIL = 10;              // 只保留最近10个位置，特小
+        let trail = [];
 
-            // 从 (1,1) 开始挖路 (奇数坐标)
-            function carve(x, y) {
-                maze[y][x] = 1; // 标记为路
-                // 四个方向随机顺序
+        // ---------- 工具：洗牌 ----------
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // ---------- 迷宫生成 (迭代深度优先) ----------
+        function generateMaze() {
+            maze = Array.from({ length: SIZE }, () => Array(SIZE).fill(0));
+            const stack = [[1, 1]];
+            maze[1][1] = 1;
+
+            while (stack.length > 0) {
+                const [x, y] = stack[stack.length - 1];
                 const dirs = [
-                    [0, -2], [0, 2],  // 上下
-                    [-2, 0], [2, 0]   // 左右
+                    [0, -2], [0, 2],
+                    [-2, 0], [2, 0]
                 ];
                 shuffleArray(dirs);
+                let moved = false;
+
                 for (let [dx, dy] of dirs) {
                     const nx = x + dx;
                     const ny = y + dy;
-                    if (nx > 0 && nx < SIZE-1 && ny > 0 && ny < SIZE-1 && maze[ny][nx] === 0) {
-                        // 打通中间墙
-                        maze[y + dy/2][x + dx/2] = 1;
-                        carve(nx, ny);
-                    }
-                }
-            }
-
-            // 洗牌函数
-            function shuffleArray(arr) {
-                for (let i = arr.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [arr[i], arr[j]] = [arr[j], arr[i]];
-                }
-                return arr;
-            }
-
-            // 从 (1,1) 开始生成
-            carve(1, 1);
-
-            // 确保终点 (SIZE-2, SIZE-2) 是路 (可能被墙覆盖, 强制设为路)
-            maze[SIZE-2][SIZE-2] = 1;
-            // 如果终点旁边是墙, 额外打通 (避免孤立)
-            const endX = SIZE-2, endY = SIZE-2;
-            // 检查终点四周是否至少有一格路, 如果没有则打通一个方向
-            const neighbors = [
-                [endX-1, endY], [endX+1, endY], [endX, endY-1], [endX, endY+1]
-            ];
-            let hasRoadNeighbor = false;
-            for (let [nx, ny] of neighbors) {
-                if (nx >= 0 && nx < SIZE && ny >= 0 && ny < SIZE && maze[ny][nx] === 1) {
-                    hasRoadNeighbor = true;
-                    break;
-                }
-            }
-            if (!hasRoadNeighbor) {
-                // 随机打通一个相邻墙 (优先向上或左)
-                const dirs = [[-1,0],[1,0],[0,-1],[0,1]];
-                shuffleArray(dirs);
-                for (let [dx, dy] of dirs) {
-                    const nx = endX + dx;
-                    const ny = endY + dy;
-                    if (nx >= 0 && nx < SIZE && ny >= 0 && ny < SIZE) {
+                    if (nx > 0 && nx < SIZE - 1 && ny > 0 && ny < SIZE - 1 && maze[ny][nx] === 0) {
+                        maze[y + dy / 2][x + dx / 2] = 1;
                         maze[ny][nx] = 1;
+                        stack.push([nx, ny]);
+                        moved = true;
                         break;
                     }
                 }
+                if (!moved) stack.pop();
             }
 
-            // 额外保证起点 (1,1) 为路 (已经确保)
-            maze[1][1] = 1;
+            // 强制终点通路
+            maze[SIZE - 2][SIZE - 2] = 1;
+            const ex = SIZE - 2, ey = SIZE - 2;
+            const neighbors = [[ex-1, ey], [ex+1, ey], [ex, ey-1], [ex, ey+1]];
+            let hasRoad = false;
+            for (let [nx, ny] of neighbors) {
+                if (nx >= 0 && nx < SIZE && ny >= 0 && ny < SIZE && maze[ny][nx] === 1) {
+                    hasRoad = true;
+                    break;
+                }
+            }
+            if (!hasRoad) {
+                if (ex - 1 >= 0) maze[ey][ex - 1] = 1;
+                else if (ey - 1 >= 0) maze[ey - 1][ex] = 1;
+            }
 
-            // 重置玩家到起点
+            // 重置玩家
             player.x = 1;
             player.y = 1;
             steps = 0;
             gameWin = false;
+            trail = [];                     // 清空拖尾
             winSpan.textContent = '✦ 闯关';
-            winSpan.style.background = '#3d5a6d';
-            winSpan.style.color = '#bdd6e8';
+            winSpan.style.background = '#2e465a';
+            winSpan.style.color = '#c8dbe9';
             stepSpan.textContent = '🚀 0';
         }
 
-        // ---------- 绘制迷宫 ----------
+        // ---------- 绘制迷宫 (含拖尾) ----------
         function drawMaze() {
-            ctx.clearRect(0, 0, 400, 400);
+            ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
             // 绘制网格
             for (let row = 0; row < SIZE; row++) {
                 for (let col = 0; col < SIZE; col++) {
                     const x = col * CELL_SIZE;
                     const y = row * CELL_SIZE;
-                    if (maze[row][col] === 1) {
-                        // 路: 浅色
-                        ctx.fillStyle = '#dae3ed';
-                        ctx.fillRect(x, y, CELL_SIZE-0.5, CELL_SIZE-0.5);
-                    } else {
-                        // 墙: 深色
-                        ctx.fillStyle = '#1f2c3b';
-                        ctx.fillRect(x, y, CELL_SIZE-0.5, CELL_SIZE-0.5);
-                    }
+                    ctx.fillStyle = maze[row][col] === 1 ? '#dce5ef' : '#192734';
+                    ctx.fillRect(x, y, CELL_SIZE - 0.5, CELL_SIZE - 0.5);
                 }
             }
 
-            // 绘制终点 (旗帜)
-            const endX = end.x * CELL_SIZE + CELL_SIZE/2;
-            const endY = end.y * CELL_SIZE + CELL_SIZE/2 - 2;
+            // ---------- 绘制拖尾 (特小光点) ----------
+            const trailLen = trail.length;
+            if (trailLen > 0) {
+                // 从旧到新，透明度逐渐增加
+                for (let i = 0; i < trailLen; i++) {
+                    const pos = trail[i];
+                    const cx = pos.x * CELL_SIZE + CELL_SIZE / 2;
+                    const cy = pos.y * CELL_SIZE + CELL_SIZE / 2;
+                    // 越近的越亮，越远的越暗，并且尺寸稍微变化
+                    const age = (i + 1) / trailLen; // 0~1, 1为最新
+                    const radius = 1.8 + 0.8 * age;  // 2.0 ~ 2.6 px，特小
+                    const alpha = 0.25 + 0.45 * age;  // 0.25 ~ 0.7
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+                    ctx.fillStyle = `rgba(180, 225, 255, ${alpha})`;
+                    ctx.shadowColor = `rgba(100, 200, 255, ${alpha * 0.5})`;
+                    ctx.shadowBlur = 4;
+                    ctx.fill();
+                }
+                ctx.shadowBlur = 0;
+                ctx.shadowColor = 'transparent';
+            }
+
+            // 终点旗帜
+            const endX = end.x * CELL_SIZE + CELL_SIZE / 2;
+            const endY = end.y * CELL_SIZE + CELL_SIZE / 2 - 1;
+            const flagSize = Math.max(6, CELL_SIZE * 0.7);
             ctx.shadowColor = '#ffd966';
-            ctx.shadowBlur = 12;
-            // 旗杆
+            ctx.shadowBlur = 10;
             ctx.beginPath();
-            ctx.strokeStyle = '#f0e6d2';
-            ctx.lineWidth = 3;
-            ctx.moveTo(endX, endY - 12);
-            ctx.lineTo(endX, endY + 8);
+            ctx.strokeStyle = '#e8dcc8';
+            ctx.lineWidth = Math.max(2, CELL_SIZE * 0.12);
+            ctx.moveTo(endX, endY - flagSize * 0.9);
+            ctx.lineTo(endX, endY + flagSize * 0.5);
             ctx.stroke();
-            // 旗帜
             ctx.fillStyle = '#f7c948';
-            ctx.shadowBlur = 16;
+            ctx.shadowBlur = 14;
             ctx.beginPath();
-            ctx.moveTo(endX, endY - 12);
-            ctx.lineTo(endX + 14, endY - 6);
-            ctx.lineTo(endX, endY);
+            ctx.moveTo(endX, endY - flagSize * 0.9);
+            ctx.lineTo(endX + flagSize * 0.9, endY - flagSize * 0.45);
+            ctx.lineTo(endX, endY - flagSize * 0.05);
             ctx.closePath();
             ctx.fill();
             ctx.shadowBlur = 0;
             ctx.shadowColor = 'transparent';
 
-            // 绘制玩家 (小圆球 + 高光)
-            const px = player.x * CELL_SIZE + CELL_SIZE/2;
-            const py = player.y * CELL_SIZE + CELL_SIZE/2;
-            // 发光
-            const gradient = ctx.createRadialGradient(px-4, py-4, 2, px, py, 18);
-            gradient.addColorStop(0, '#b3e5ff');
-            gradient.addColorStop(0.6, '#4db8ff');
+            // 玩家 (发光小球)
+            const px = player.x * CELL_SIZE + CELL_SIZE / 2;
+            const py = player.y * CELL_SIZE + CELL_SIZE / 2;
+            const playerRadius = Math.max(4, CELL_SIZE * 0.42);
+            const gradient = ctx.createRadialGradient(
+                px - playerRadius * 0.3, py - playerRadius * 0.4, 1,
+                px, py, playerRadius * 1.6
+            );
+            gradient.addColorStop(0, '#c6f0ff');
+            gradient.addColorStop(0.5, '#4db8ff');
             gradient.addColorStop(1, '#0066b0');
             ctx.shadowColor = '#4db8ff';
-            ctx.shadowBlur = 22;
+            ctx.shadowBlur = 20;
             ctx.beginPath();
-            ctx.arc(px, py, 12, 0, 2 * Math.PI);
+            ctx.arc(px, py, playerRadius, 0, 2 * Math.PI);
             ctx.fillStyle = gradient;
             ctx.fill();
-            // 高光
-            ctx.shadowBlur = 6;
+            ctx.shadowBlur = 4;
             ctx.beginPath();
-            ctx.arc(px-4, py-5, 4, 0, 2 * Math.PI);
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.arc(px - playerRadius * 0.3, py - playerRadius * 0.4, playerRadius * 0.3, 0, 2 * Math.PI);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
             ctx.fill();
             ctx.shadowBlur = 0;
             ctx.shadowColor = 'transparent';
         }
 
-        // ---------- 移动逻辑 ----------
+        // ---------- 移动逻辑 (更新拖尾) ----------
         function movePlayer(dx, dy) {
-            if (gameWin) return false; // 已通关不可移动 (但可重置)
+            if (gameWin) return false;
 
             const newX = player.x + dx;
             const newY = player.y + dy;
 
-            // 边界 & 墙检测
             if (newX < 0 || newX >= SIZE || newY < 0 || newY >= SIZE) return false;
             if (maze[newY][newX] !== 1) return false;
+
+            // 移动前，将当前位置加入拖尾 (但不要重复加入起点)
+            // 如果玩家尚未移动，则第一次移动时加入起点
+            if (trail.length === 0) {
+                trail.push({ x: player.x, y: player.y });
+            } else {
+                // 如果新位置与拖尾最后一个位置相同，则不重复添加（避免原地踏步）
+                const last = trail[trail.length - 1];
+                if (last.x !== player.x || last.y !== player.y) {
+                    trail.push({ x: player.x, y: player.y });
+                }
+            }
+            // 限制拖尾长度
+            while (trail.length > MAX_TRAIL) {
+                trail.shift();
+            }
 
             // 执行移动
             player.x = newX;
@@ -341,36 +366,32 @@
             steps++;
             stepSpan.textContent = `🚀 ${steps}`;
 
-            // 检查是否到达终点
+            // 到达终点
             if (player.x === end.x && player.y === end.y) {
                 gameWin = true;
                 winSpan.textContent = '🎉 通关!';
                 winSpan.style.background = '#48b87c';
                 winSpan.style.color = '#0d1f14';
-                // 额外闪烁效果 (可忽略)
+                // 到达终点后，保留拖尾，但不再添加新点（因为已胜利）
             }
 
             drawMaze();
             return true;
         }
 
-        // ---------- 重置游戏 (新地图) ----------
+        // ---------- 重置游戏 ----------
         function resetGame() {
             generateMaze();
-            // 重置终点 (固定为 SIZE-2, SIZE-2)
-            end = { x: SIZE-2, y: SIZE-2 };
-            // 保证终点是路 (生成时已保证)
             drawMaze();
             stepSpan.textContent = '🚀 0';
             winSpan.textContent = '✦ 闯关';
-            winSpan.style.background = '#3d5a6d';
-            winSpan.style.color = '#bdd6e8';
+            winSpan.style.background = '#2e465a';
+            winSpan.style.color = '#c8dbe9';
             gameWin = false;
         }
 
         // ---------- 事件绑定 ----------
         function setupControls() {
-            // 方向按钮
             document.querySelectorAll('.control-btn[data-dir]').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const dir = e.currentTarget.dataset.dir;
@@ -381,13 +402,9 @@
                         case 'right': movePlayer(1, 0); break;
                     }
                 });
-                // 防止触控时页面缩放/滚动
-                btn.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                });
+                btn.addEventListener('touchstart', (e) => e.preventDefault());
             });
 
-            // 键盘支持 (可选)
             document.addEventListener('keydown', (e) => {
                 const key = e.key;
                 if (key === 'ArrowUp') { e.preventDefault(); movePlayer(0, -1); }
@@ -397,7 +414,6 @@
                 else if (key === 'r' || key === 'R') { resetGame(); }
             });
 
-            // 重置按钮
             document.getElementById('resetGameBtn').addEventListener('click', resetGame);
             document.getElementById('resetGameBtn').addEventListener('touchstart', (e) => {
                 e.preventDefault();

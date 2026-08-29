@@ -171,6 +171,13 @@
             gap: 28px;
         }
 
+        /* ---------- 爱好卡片样式 (支持链接) ---------- */
+        .hobby-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
         .hobby-item {
             background: rgba(245, 238, 230, 0.55);
             backdrop-filter: blur(8px);
@@ -181,6 +188,8 @@
             border: 1px solid rgba(255, 245, 235, 0.6);
             box-shadow: 0 6px 18px rgba(100, 75, 55, 0.06);
             transition: all 0.2s ease;
+            height: 100%;
+            cursor: pointer;
         }
 
         .hobby-item:hover {
@@ -221,7 +230,19 @@
             font-size: 13px;
         }
 
-        /* ---- 社交链接区域 (新增 GitHub) ---- */
+        .hobby-item .hobby-tag {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 12px;
+            background: rgba(160, 130, 100, 0.12);
+            padding: 2px 16px;
+            border-radius: 60px;
+            color: #5a4a3a;
+            letter-spacing: 0.3px;
+            border: 1px solid rgba(200, 170, 140, 0.15);
+        }
+
+        /* ---- 社交链接区域 ---- */
         .social-links {
             margin-top: 40px;
             padding-top: 32px;
@@ -386,18 +407,6 @@
         .hero-image-section img {
             background: #d2c2b2;
         }
-
-        .hobby-item .hobby-tag {
-            display: inline-block;
-            margin-top: 10px;
-            font-size: 12px;
-            background: rgba(160, 130, 100, 0.12);
-            padding: 2px 16px;
-            border-radius: 60px;
-            color: #5a4a3a;
-            letter-spacing: 0.3px;
-            border: 1px solid rgba(200, 170, 140, 0.15);
-        }
     </style>
 </head>
 <body>
@@ -444,7 +453,7 @@
 
         <div class="hobbies-grid">
 
-            <!-- Minecraft -->
+            <!-- Minecraft (无链接) -->
             <div class="hobby-item">
                 <span class="hobby-icon">
                     <i class="fas fa-cube"></i>
@@ -458,21 +467,23 @@
                 </div>
             </div>
 
-            <!-- 终末地 -->
-            <div class="hobby-item">
-                <span class="hobby-icon">
-                    <i class="fas fa-rocket"></i>
-                </span>
-                <div class="hobby-name">终末地</div>
-                <div class="hobby-desc">
-                    <i class="fas fa-globe-asia"></i> 科幻 · 策略 · 末世
+            <!-- 终末地 (可点击链接) -->
+            <a href="https://endfield.hypergryph.com/news/7231" target="_blank" class="hobby-link">
+                <div class="hobby-item">
+                    <span class="hobby-icon">
+                        <i class="fas fa-rocket"></i>
+                    </span>
+                    <div class="hobby-name">终末地</div>
+                    <div class="hobby-desc">
+                        <i class="fas fa-globe-asia"></i> 科幻 · 策略 · 末世
+                    </div>
+                    <div class="hobby-tag">
+                        <i class="fas fa-satellite"></i> 明日方舟 · 终末地
+                    </div>
                 </div>
-                <div class="hobby-tag">
-                    <i class="fas fa-satellite"></i> 明日方舟 · 终末地
-                </div>
-            </div>
+            </a>
 
-            <!-- 诡秘之主 -->
+            <!-- 诡秘之主 (无链接) -->
             <div class="hobby-item">
                 <span class="hobby-icon">
                     <i class="fas fa-mask"></i>
@@ -488,7 +499,7 @@
 
         </div>
 
-        <!-- ===== 社交链接：B站 + CSDN + GitHub (新增) ===== -->
+        <!-- 社交链接：B站 + CSDN + GitHub -->
         <div class="social-links">
             <a href="https://space.bilibili.com/3546710731131568" target="_blank" class="social-link" title="访问我的B站主页">
                 <i class="fab fa-bilibili"></i>
